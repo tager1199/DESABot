@@ -35,9 +35,11 @@ api = tweepy.API(auth)
 f = open("TOKEN.txt", "r")
 TOKEN = f.read();
 running = False
+first = True
 client = discord.Client()
 
 async def TaskLoop():
+    global first
     tChannel = client.get_channel(590822617858965514)
     while(True):
         #channel = client.get_channel(520565813443559435)
@@ -46,11 +48,19 @@ async def TaskLoop():
         msg = dino.screen_name + " has: " + str(dino.followers_count) + " followers!" + "\n"
         msg += flat.screen_name + " has: " + str(flat.followers_count) + " followers!" + "\n" + "***"
         if (dino.followers_count < flat.followers_count):
-            msg += flat.screen_name + " has " + str(flat.followers_count - dino.followers_count) + " more followers!" + "\n" + "***"
+            msg += flat.screen_name + " has " + str(flat.followers_count - dino.followers_count) + " more followers!" + "***" + "\n"
         else:
-            msg += dino.screen_name + " has " + str(dino.followers_count - flat.followers_count) + " more followers!" + "\n" + "***"
+            msg += dino.screen_name + " has " + str(dino.followers_count - flat.followers_count) + " more followers!" + "***" + "\n"
+        percent = (float(dino.followers_count/flat.followers_count))*100
+        msg += "***" + dino.screen_name +  " has: " + percent + "% of " + str(flat.screen_name) + "'s followers!" + "***"  + "\n"
+        if (percent == 50 or percent == 60 or percent == 70 or percent == 80 or percent == 90 or percent == 100):
+            msg += "\n" + "Check out <https://www.dinosaurearthsociety.com/livecount/> for an easter egg"
 
-        await tChannel.send(msg)
+        if (first==True):
+            m = await tChannel.send(msg)
+            first = False
+        else:
+             m.edit(content = msg)
         await asyncio.sleep(3600)
 
 
